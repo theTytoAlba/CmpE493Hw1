@@ -22,7 +22,34 @@ public class FileOperations {
 		}
 		// Organize tokens to merge non-token entries.
 		tagTokens = organizeTagsAndStrings(tagTokens);
-		// TODO: Construct the JSONObject.
+		// Extract texts of stories.
+		ArrayList<ArrayList<String>> stories = extractTexts(tagTokens);
+		// TODO: Extract title and body of text.
+	}
+	
+	/**
+	 * Given an organized string array of tags and non-tags,
+	 * creates an array of string arrays where
+	 * each array is one story's content (between text tags).
+	 */
+	private static ArrayList<ArrayList<String>> extractTexts(ArrayList<String> tokens) {
+		ArrayList<ArrayList<String>> texts = new ArrayList<>();
+		
+		for (int i = 0; i < tokens.size(); i++) {
+			ArrayList<String> newsStory = new ArrayList<>();
+			// Find the beginning of the text.
+			if (tokens.get(i).equals("<TEXT>")) {
+				// Find the ending of the text and create the news story from tokens in between.
+				for (int j = i+1; j < tokens.size(); j++) {
+					if (tokens.get(j).equals("</TEXT>")) {
+						texts.add(newsStory);
+						break;
+					}
+					newsStory.add(tokens.get(j));
+				}
+			}
+		}
+		return texts;
 	}
 	
 	/**
