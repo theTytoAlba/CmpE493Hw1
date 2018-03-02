@@ -12,13 +12,17 @@ public class FileOperations {
 
 	public static void parseDocumentToJSON(String fileName) {
 		// Tokenize by tags and lines first.
+		ArrayList<String> tagTokens = null;
 		try {
-			tokenizeByTagsAndStrings(fileName);
+			tagTokens = tokenizeByTagsAndStrings(fileName);
 		} catch (IOException e) {
 			System.out.println("Failed to tokenize document " + fileName + " by tags and strings.");
 			e.printStackTrace();
+			return;
 		}
-		// TODO: Process tags and lines.
+		// Organize tokens to merge non-token entries.
+		tagTokens = organizeTagsAndStrings(tagTokens);
+		// TODO: Construct the JSONObject.
 	}
 	
 	/**
@@ -52,9 +56,51 @@ public class FileOperations {
 					m = tagPattern.matcher(line);
 				}
 				// Add the remaining text as token.
-				tokens.add(line);
+				if (!line.isEmpty()) {
+					tokens.add(line);	
+				}
 		    }
 		}
 		return tokens;
+	}
+	
+	/**
+	 * Takes in an array list of strings with tags and non-tags.
+	 * Merges every non-tag entry into one element.
+	 * Preserves the order.
+	 */
+	private static ArrayList<String> organizeTagsAndStrings(ArrayList<String> tokens) {
+		ArrayList<String> organizedTokens = new ArrayList<>();
+		// Initial token should always be a tag (the DOCTYPE tag).
+		organizedTokens.add(tokens.get(0));
+		tokens.remove(0);
+		boolean isPreviousTokenTag = true;
+		// Process remaining tokens.
+		for (String token : tokens) {
+			if (isTag(token)) {
+				// If it is a tag, add it directly
+				organizedTokens.add(token);
+				isPreviousTokenTag = true;
+			} else if (isPreviousTokenTag) {
+				// If previous token was a tag, add this one as the next token.
+				organizedTokens.add(token);
+				isPreviousTokenTag = false;
+			} else {
+				// If both previous and this tokens are not tags, merge them.
+				String prev = organizedTokens.get(organizedTokens.size()-1);
+				organizedTokens.remove(organizedTokens.size()-1);
+				organizedTokens.add(prev + " " + token);
+			}
+		}
+		return organizedTokens;
+	}		
+	
+	/**
+	 * Takes in a string.
+	 * Returns true if it starts with < and ends with >.
+	 * Returns false otherwise.
+	 */
+	private static boolean isTag(String token) {
+		return token.charAt(0) == '<' && token.charAt(token.length()-1) == '>';
 	}
 }

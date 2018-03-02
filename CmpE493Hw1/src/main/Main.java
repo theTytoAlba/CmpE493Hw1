@@ -7,7 +7,7 @@ package main;
 public class Main {
 	public static void main(String[] args) {
 		// TODO: Generalize the parsing for all documents.
-		String fileName = "Dataset/reut2-002.sgm";
+		String fileName = "Dataset/reut2-000.sgm";
 		FileOperations.parseDocumentToJSON(fileName);
 	}
 
