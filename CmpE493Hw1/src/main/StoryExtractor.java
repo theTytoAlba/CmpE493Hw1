@@ -7,10 +7,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+/**
+ * This class reads a given document and creates a
+ * NewsStory array with body and title fields.
+ */
+public class StoryExtractor {
 
-public class FileOperations {
-
-	public static void parseDocumentToJSON(String fileName) {
+	public static ArrayList<NewsStory> getStoriesFromDocument(String fileName) {
 		// Tokenize by tags and lines first.
 		ArrayList<String> tagTokens = null;
 		try {
@@ -18,7 +21,7 @@ public class FileOperations {
 		} catch (IOException e) {
 			System.out.println("Failed to tokenize document " + fileName + " by tags and strings.");
 			e.printStackTrace();
-			return;
+			return null;
 		}
 		// Organize tokens to merge non-token entries.
 		tagTokens = organizeTagsAndStrings(tagTokens);
@@ -26,21 +29,8 @@ public class FileOperations {
 		ArrayList<ArrayList<String>> storyTexts = extractTexts(tagTokens);
 		// Extract title and body of texts.
 		ArrayList<NewsStory> stories = extractTitleAndBody(storyTexts);
-		// TODO: Process stories.
-		
-		printStories(stories);
-	}
-	
-	/**
-	 * Prints story title and bodies with dashes in between.
-	 */
-	private static void printStories(ArrayList<NewsStory> stories) {
-		for (NewsStory s : stories) {
-			System.out.println("============");
-			System.out.println(s.title);
-			System.out.println("------------");
-			System.out.println(s.body);
-		}
+		// Return result
+		return stories;
 	}
 	
 	/**
@@ -68,11 +58,13 @@ public class FileOperations {
 					// Find the end of the body.
 					for (int j = i+1; j < storyText.size(); j++) {
 						if(storyText.get(j).equals("</BODY>")) {
+							// fix '<' character.
+							story.title = story.title.replaceAll("&lt;", "<");
+							story.body = story.body.replaceAll("&lt;", "<");
+							// Fix empty string character.
+							story.title = story.title.replaceAll("&#3;", "");
+							story.body = story.body.replaceAll("&#3;", "");
 							stories.add(story);
-
-							System.out.println("============");
-							System.out.println(story.title);
-							System.out.println(story.body);
 							break;
 						}
 						story.body += " " + storyText.get(j);
