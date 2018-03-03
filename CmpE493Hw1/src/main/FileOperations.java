@@ -23,8 +23,64 @@ public class FileOperations {
 		// Organize tokens to merge non-token entries.
 		tagTokens = organizeTagsAndStrings(tagTokens);
 		// Extract texts of stories.
-		ArrayList<ArrayList<String>> stories = extractTexts(tagTokens);
-		// TODO: Extract title and body of text.
+		ArrayList<ArrayList<String>> storyTexts = extractTexts(tagTokens);
+		// Extract title and body of texts.
+		ArrayList<NewsStory> stories = extractTitleAndBody(storyTexts);
+		// TODO: Process stories.
+		
+		printStories(stories);
+	}
+	
+	/**
+	 * Prints story title and bodies with dashes in between.
+	 */
+	private static void printStories(ArrayList<NewsStory> stories) {
+		for (NewsStory s : stories) {
+			System.out.println("============");
+			System.out.println(s.title);
+			System.out.println("------------");
+			System.out.println(s.body);
+		}
+	}
+	
+	/**
+	 * Given story texts, extracts the title and body texts for each story.
+	 * Creates NewsStory objects with them and returns an array.
+	 */
+	private static ArrayList<NewsStory> extractTitleAndBody(ArrayList<ArrayList<String>> storyTexts) {
+		ArrayList<NewsStory> stories = new ArrayList<>();
+		for (ArrayList<String> storyText : storyTexts) {
+			NewsStory story = new NewsStory();
+			for (int i = 0; i < storyText.size(); i++) {
+				// Find the title
+				if(storyText.get(i).equals("<TITLE>")) {
+					// Find the end of the title.
+					for (int j = i+1; j < storyText.size(); j++) {
+						if(storyText.get(j).equals("</TITLE>")) {
+							break;
+						}
+						story.title += " " + storyText.get(j);
+					}		
+				}
+				
+				// Find the body
+				if(storyText.get(i).equals("<BODY>")) {
+					// Find the end of the body.
+					for (int j = i+1; j < storyText.size(); j++) {
+						if(storyText.get(j).equals("</BODY>")) {
+							stories.add(story);
+
+							System.out.println("============");
+							System.out.println(story.title);
+							System.out.println(story.body);
+							break;
+						}
+						story.body += " " + storyText.get(j);
+					}		
+				}
+			}
+		}
+		return stories;
 	}
 	
 	/**
@@ -116,7 +172,7 @@ public class FileOperations {
 				// If both previous and this tokens are not tags, merge them.
 				String prev = organizedTokens.get(organizedTokens.size()-1);
 				organizedTokens.remove(organizedTokens.size()-1);
-				organizedTokens.add(prev + " " + token);
+				organizedTokens.add(prev + "\n" + token);
 			}
 		}
 		return organizedTokens;
