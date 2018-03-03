@@ -24,7 +24,7 @@ public class Main {
 			if (e.getMessage().equals("DictionaryException")) {
 				System.out.println("Failed to read dictionary from file, recreating...");
 			} else {
-				System.out.println("Failed to read indexes from file, recreating...");	
+				System.out.println("Failed to read indexes from file, recreating...");
 			}
 			// Read the stories from documents.
 			ArrayList<ArrayList<NewsStory>> documents = readStoriesFromDocuments();
