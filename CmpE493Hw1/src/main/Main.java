@@ -11,14 +11,21 @@ import java.util.ArrayList;
  */
 public class Main {
 	public static void main(String[] args) {
-		// Read the stories from documents.
-		ArrayList<ArrayList<NewsStory>> documents = readStoriesFromDocuments();
-		// Read the stop words.
-		StoryTokenizer.setStopWords(readStopWords());
-		// Tokenize the stories.
-		documents = tokenizeStories(documents);
-		// Create dictionary
-		createDictionary(documents);
+		try {
+			System.out.println("Reading dictionary from file...");
+			DictionaryBuilder.readDictionaryFromDocument(Constants.dictionaryLocation);
+			System.out.println("Reading dictionary from file DONE.");
+		} catch (Exception e) {
+			System.out.println("Failed to read dictionary from file, recreating...");
+			// Read the stories from documents.
+			ArrayList<ArrayList<NewsStory>> documents = readStoriesFromDocuments();
+			// Read the stop words.
+			StoryTokenizer.setStopWords(readStopWords());
+			// Tokenize the stories.
+			documents = tokenizeStories(documents);
+			// Create dictionary
+			createDictionary(documents);
+		}
 	}
 	
 	/**
@@ -32,7 +39,6 @@ public class Main {
 		}
 		DictionaryBuilder.writeDictionaryToDocument(Constants.dictionaryLocation);
 		System.out.println("Creating dictionary DONE.");
-		//DictionaryBuilder.readDictionaryFromDocument(Constants.dictionaryLocation);
 	}
 
 	/**

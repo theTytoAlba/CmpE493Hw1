@@ -48,16 +48,12 @@ public class DictionaryBuilder {
 	}
 	
 	/**
-	 * Reads given file as dictionary.
+	 * Reads given file as dictionary and stores in class variable.
 	 */
-	public static void readDictionaryFromDocument(String fileName) {
-		ObjectInputStream obj;
-		try {
-			obj = new ObjectInputStream(new FileInputStream(fileName));
-	        dictionary = (HashMap<String, Integer>)obj.readObject();
-		} catch (Exception e) {
-			System.out.println("Error while reading dictionary from file " + fileName);
-			e.printStackTrace();
-		}
+	@SuppressWarnings("unchecked")
+	public static void readDictionaryFromDocument(String fileName) throws Exception {
+		ObjectInputStream obj = new ObjectInputStream(new FileInputStream(fileName));
+	    dictionary = (HashMap<String, Integer>)obj.readObject();
+	    obj.close();
 	}
 }
