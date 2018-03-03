@@ -32,6 +32,7 @@ public class Main {
 		}
 		DictionaryBuilder.writeDictionaryToDocument(Constants.dictionaryLocation);
 		System.out.println("Creating dictionary DONE.");
+		//DictionaryBuilder.readDictionaryFromDocument(Constants.dictionaryLocation);
 	}
 
 	/**

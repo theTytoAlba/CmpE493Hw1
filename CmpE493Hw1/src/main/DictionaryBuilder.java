@@ -1,6 +1,10 @@
 package main;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,5 +45,19 @@ public class DictionaryBuilder {
 			System.out.println("There was a problem writing the dictionary object to file " + fileName);
 			e.printStackTrace();
 		} 
+	}
+	
+	/**
+	 * Reads given file as dictionary.
+	 */
+	public static void readDictionaryFromDocument(String fileName) {
+		ObjectInputStream obj;
+		try {
+			obj = new ObjectInputStream(new FileInputStream(fileName));
+	        dictionary = (HashMap<String, Integer>)obj.readObject();
+		} catch (Exception e) {
+			System.out.println("Error while reading dictionary from file " + fileName);
+			e.printStackTrace();
+		}
 	}
 }
