@@ -12,7 +12,10 @@ import java.util.regex.Pattern;
  * NewsStory array with body and title fields.
  */
 public class StoryExtractor {
-
+	/**
+	 * Given the file name, extracts the stories using body and title tags
+	 * within text tags. Returns an array of NewsStory objects.
+	 */
 	public static ArrayList<NewsStory> getStoriesFromDocument(String fileName) {
 		// Tokenize by tags and lines first.
 		ArrayList<String> tagTokens = null;
@@ -61,9 +64,10 @@ public class StoryExtractor {
 							// fix '<' character.
 							story.title = story.title.replaceAll("&lt;", "<");
 							story.body = story.body.replaceAll("&lt;", "<");
-							// Fix empty string character.
+							// Fix end of file character.
 							story.title = story.title.replaceAll("&#3;", "");
 							story.body = story.body.replaceAll("&#3;", "");
+							// Add story to story list.
 							stories.add(story);
 							break;
 						}
