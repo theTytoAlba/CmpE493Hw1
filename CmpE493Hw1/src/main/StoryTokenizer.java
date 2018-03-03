@@ -8,11 +8,25 @@ public class StoryTokenizer {
 	public static ArrayList<NewsStory> tokenizeStories(ArrayList<NewsStory> stories) {
 		ArrayList<NewsStory> tokenizedStories = new ArrayList<>();
 		for (NewsStory story : stories) {
-			story.titleTokens = tokenizeString(story.title);
-			story.bodyTokens = tokenizeString(story.body);
+			story.titleTokens = stem(tokenizeString(story.title));
+			story.bodyTokens = stem(tokenizeString(story.body));
 			tokenizedStories.add(story);
 		}
 		return tokenizedStories;
+	}
+	
+	
+	private static ArrayList<String> stem(ArrayList<String> tokens) {
+		ArrayList<String> stemmedTokens = new ArrayList<>();
+		PorterStemmer stemmer;
+	    // Stem each word.
+		for (String token : tokens) {
+			stemmer = new PorterStemmer();
+			stemmer.add(token.toCharArray(), token.length());
+			stemmer.stem();
+			stemmedTokens.add(stemmer.toString());
+		}
+		return stemmedTokens;
 	}
 	
 	/**
@@ -20,7 +34,7 @@ public class StoryTokenizer {
 	 * removes integers and one letter words, then returns the remaining words as
 	 * a String array.
 	 */
-	public static ArrayList<String> tokenizeString(String text) {
+	private static ArrayList<String> tokenizeString(String text) {
 		// Make text lowercase.
 		text = text.toLowerCase();
 		// Remove all punctuation marks and new lines.

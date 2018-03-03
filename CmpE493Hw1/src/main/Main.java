@@ -57,7 +57,7 @@ public class Main {
 	
 	/**
 	 * Given an array containing the story arrays for each document,
-	 * iterates the array and tokenizes each story.
+	 * iterates the array and tokenizes and stems each story.
 	 */
 	private static ArrayList<ArrayList<NewsStory>> tokenizeStories(ArrayList<ArrayList<NewsStory>> documents) {
 		ArrayList<ArrayList<NewsStory>> tokenizedDocuments = new ArrayList<>();
