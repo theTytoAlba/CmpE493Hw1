@@ -5,6 +5,16 @@ import java.util.ArrayList;
 public class StoryTokenizer {
 	static ArrayList<String> stopWords;
 	
+	public static ArrayList<NewsStory> tokenizeStories(ArrayList<NewsStory> stories) {
+		ArrayList<NewsStory> tokenizedStories = new ArrayList<>();
+		for (NewsStory story : stories) {
+			story.titleTokens = tokenizeString(story.title);
+			story.bodyTokens = tokenizeString(story.body);
+			tokenizedStories.add(story);
+		}
+		return tokenizedStories;
+	}
+	
 	/**
 	 * Given a text, does case folding, removes punctuation marks and new lines,
 	 * removes integers and one letter words, then returns the remaining words as

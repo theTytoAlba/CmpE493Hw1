@@ -16,11 +16,7 @@ public class Main {
 		// Read the stop words.
 		StoryTokenizer.setStopWords(readStopWords());
 		// Tokenize the stories.
-		// TODO: documents = tokenizeStories(documents);
-		
-		for(String s : StoryTokenizer.tokenizeString(documents.get(0).get(0).body)) {
-			System.out.println(s);
-		}
+		documents = tokenizeStories(documents);
 		//printAllDocuments(documents);
 	}
 	
