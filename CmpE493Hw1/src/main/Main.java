@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Irmak Kavasoglu
@@ -11,7 +12,7 @@ import java.util.ArrayList;
  */
 public class Main {
 	public static void main(String[] args) {
-		// Read dictionary if exists and if not, recreate.
+		// Read dictionary and indexes if they exist and if not, recreate.
 		try {
 			System.out.println("Reading dictionary from file...");
 			DictionaryBuilder.readDictionaryFromDocument(Constants.dictionaryLocation);
@@ -33,6 +34,8 @@ public class Main {
 			documents = tokenizeStories(documents);
 			// Create dictionary
 			createDictionary(documents);
+			// Create indexes
+			createIndexes(documents, DictionaryBuilder.getDictionary());
 		}
 	}
 	
@@ -45,8 +48,26 @@ public class Main {
 			printProgress("Processing document", i+1, 22);
 			DictionaryBuilder.updateDictionaryWithNewDocument(documents.get(i));
 		}
-		DictionaryBuilder.writeDictionaryToDocument(Constants.dictionaryLocation);
 		System.out.println("Creating dictionary DONE.");
+		System.out.println("Writing dictionary to file...");
+		DictionaryBuilder.writeDictionaryToDocument(Constants.dictionaryLocation);
+		System.out.println("Writing dictionary to file DONE.");
+	}
+	
+	/**
+	 * Create indexes of given files and dictionary and writes it to file.
+	 */
+	private static void createIndexes(ArrayList<ArrayList<NewsStory>> documents, HashMap<String, Integer> dictionary) {
+		System.out.println("Creating indexes...");
+		IndexBuilder.setDictionary(dictionary);
+		for (int i = 0; i < 22; i++) {
+			printProgress("Indexing document", i+1, 22);
+			IndexBuilder.updateIndexesWithNewDocument(documents.get(i));
+		}
+		System.out.println("Creating indexes DONE.");
+		System.out.println("Writing indexes to file...");
+		IndexBuilder.writeIndexesToDocument(Constants.indexesLocation);
+		System.out.println("Writing indexes to file DONE.");
 	}
 
 	/**

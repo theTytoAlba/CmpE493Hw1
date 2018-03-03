@@ -60,4 +60,7 @@ public class DictionaryBuilder {
 			throw new Exception("DictionaryException");
 		}
 	}
+	public static HashMap<String, Integer> getDictionary() {
+		return dictionary;
+	}
 }
