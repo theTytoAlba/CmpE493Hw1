@@ -11,12 +11,20 @@ import java.util.ArrayList;
  */
 public class Main {
 	public static void main(String[] args) {
+		// Read dictionary if exists and if not, recreate.
 		try {
 			System.out.println("Reading dictionary from file...");
 			DictionaryBuilder.readDictionaryFromDocument(Constants.dictionaryLocation);
 			System.out.println("Reading dictionary from file DONE.");
+			System.out.println("Reading indexes from file...");
+			IndexBuilder.readIndexesFromDocument(Constants.indexesLocation);
+			System.out.println("Reading indexes from file DONE.");
 		} catch (Exception e) {
-			System.out.println("Failed to read dictionary from file, recreating...");
+			if (e.getMessage().equals("DictionaryException")) {
+				System.out.println("Failed to read dictionary from file, recreating...");
+			} else {
+				System.out.println("Failed to read indexes from file, recreating...");	
+			}
 			// Read the stories from documents.
 			ArrayList<ArrayList<NewsStory>> documents = readStoriesFromDocuments();
 			// Read the stop words.

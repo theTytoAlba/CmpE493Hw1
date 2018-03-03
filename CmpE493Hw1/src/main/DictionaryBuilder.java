@@ -52,8 +52,12 @@ public class DictionaryBuilder {
 	 */
 	@SuppressWarnings("unchecked")
 	public static void readDictionaryFromDocument(String fileName) throws Exception {
-		ObjectInputStream obj = new ObjectInputStream(new FileInputStream(fileName));
-	    dictionary = (HashMap<String, Integer>)obj.readObject();
-	    obj.close();
+		try {
+			ObjectInputStream obj = new ObjectInputStream(new FileInputStream(fileName));
+		    dictionary = (HashMap<String, Integer>)obj.readObject();
+		    obj.close();
+		} catch (Exception e) {
+			throw new Exception("DictionaryException");
+		}
 	}
 }
