@@ -35,6 +35,7 @@ public class Main {
 			System.out.println("Error while reading stopwords form Dataset/stopwords.txt");
 			e.printStackTrace();
 		}
+		System.out.println("Reading stop words DONE.");
 		return stopwords;
 	}
 	
@@ -49,9 +50,10 @@ public class Main {
 		// Read documents;
 		for (int i = 0; i < 22; i++) {
 			String fileName = "Dataset/reut2-0" + (i<10 ? "0" : "") + i + ".sgm";
-			System.out.println("Reading document " + (i+1) + "/" + 22);
+			printProgress("Reading document", i+1, 22);
 			documents.add(StoryExtractor.getStoriesFromDocument(fileName));
 		}
+		System.out.println("Reading documents DONE.");
 		return documents;
 	}
 	
@@ -64,9 +66,10 @@ public class Main {
 		System.out.println("Tokenizing documents...");
 		// Tokenize documents;
 		for (int i = 0; i < documents.size(); i++) {
-			System.out.println("Tokenizing document " + (i+1) + "/" + documents.size());
+			printProgress("Tokenizing document", i+1, 22);
 			tokenizedDocuments.add(StoryTokenizer.tokenizeStories(documents.get(i)));
 		}
+		System.out.println("Tokenizing documents DONE.");
 		return tokenizedDocuments;
 	}
 	
@@ -88,4 +91,15 @@ public class Main {
 		}
 	}
 
+	private static void printProgress(String preText, int current, int total) {
+		System.out.print(preText + " ");
+		System.out.print((current<10 ? "0" : "") + current + "/" + total + ": [");
+		for (int j = 0; j < current; j++) {
+			System.out.print("#");
+		}
+		for (int j = current; j < total; j++) {
+			System.out.print("-");
+		}
+		System.out.println("]");
+	}
 }
