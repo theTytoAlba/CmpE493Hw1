@@ -4,7 +4,9 @@ import java.util.ArrayList;
 
 public class StoryTokenizer {
 	static ArrayList<String> stopWords;
-	
+	/**
+	 * Takes in a story array and returns the tokenized and stemmed version of it.
+	 */
 	public static ArrayList<NewsStory> tokenizeStories(ArrayList<NewsStory> stories) {
 		ArrayList<NewsStory> tokenizedStories = new ArrayList<>();
 		for (NewsStory story : stories) {
@@ -15,7 +17,9 @@ public class StoryTokenizer {
 		return tokenizedStories;
 	}
 	
-	
+	/**
+	 * Takes in a String array and returns the stemmed version of it.
+	 */
 	private static ArrayList<String> stem(ArrayList<String> tokens) {
 		ArrayList<String> stemmedTokens = new ArrayList<>();
 		PorterStemmer stemmer;
@@ -65,7 +69,7 @@ public class StoryTokenizer {
 	 */
 	private static boolean isInteger(String token) {
 		try {
-			int integer = Integer.parseInt(token);
+			Integer.parseInt(token);
 			return true;
 		} catch (Exception e) {
 			return false;
@@ -73,8 +77,7 @@ public class StoryTokenizer {
 	}
 	
 	/**
-	 * Sets the 
-	 * @param stopWords
+	 * Sets the stopWords of this class.
 	 */
 	public static void setStopWords(ArrayList<String> stopWords) {
 		StoryTokenizer.stopWords = stopWords;

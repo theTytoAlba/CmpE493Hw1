@@ -17,16 +17,30 @@ public class Main {
 		StoryTokenizer.setStopWords(readStopWords());
 		// Tokenize the stories.
 		documents = tokenizeStories(documents);
-		//printAllDocuments(documents);
+		// Create dictionary
+		createDictionary(documents);
 	}
 	
 	/**
-	 * Reads stop words from "Dataset/stopwords.txt".
+	 * Creates a dictionary and writes it to file with words from given documents.
+	 */
+	private static void createDictionary(ArrayList<ArrayList<NewsStory>> documents) {
+		System.out.println("Creating dictionary...");
+		for (int i = 0; i < 22; i++) {
+			printProgress("Processing document", i+1, 22);
+			DictionaryBuilder.updateDictionaryWithNewDocument(documents.get(i));
+		}
+		DictionaryBuilder.writeDictionaryToDocument(Constants.dictionaryLocation);
+		System.out.println("Creating dictionary DONE.");
+	}
+
+	/**
+	 * Reads stop words from the location in Constants.
 	 */
 	private static ArrayList<String> readStopWords() {
 		ArrayList<String> stopwords = new ArrayList<>();
 		System.out.println("Reading stop words...");
-		try (BufferedReader br = new BufferedReader(new FileReader("Dataset/stopwords.txt"))) {
+		try (BufferedReader br = new BufferedReader(new FileReader(Constants.stopWordsLocation))) {
 			String line;
 		    while ((line = br.readLine()) != null) {
 		    		stopwords.add(line.trim());
@@ -91,6 +105,10 @@ public class Main {
 		}
 	}
 
+	/**
+	 * Prints the pretext, prints a space, prints the progress as text like xx/yy,
+	 * prints a semicolon and then prints the progress bar in form [#####----].
+	 */
 	private static void printProgress(String preText, int current, int total) {
 		System.out.print(preText + " ");
 		System.out.print((current<10 ? "0" : "") + current + "/" + total + ": [");
