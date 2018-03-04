@@ -20,7 +20,7 @@ public class StoryTokenizer {
 	/**
 	 * Takes in a String array and returns the stemmed version of it.
 	 */
-	private static ArrayList<String> stem(ArrayList<String> tokens) {
+	public static ArrayList<String> stem(ArrayList<String> tokens) {
 		ArrayList<String> stemmedTokens = new ArrayList<>();
 		PorterStemmer stemmer;
 	    // Stem each word.
@@ -38,7 +38,7 @@ public class StoryTokenizer {
 	 * removes integers and one letter words, then returns the remaining words as
 	 * a String array.
 	 */
-	private static ArrayList<String> tokenizeString(String text) {
+	public static ArrayList<String> tokenizeString(String text) {
 		// Make text lowercase.
 		text = text.toLowerCase();
 		// Remove all punctuation marks and new lines.
