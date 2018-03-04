@@ -12,7 +12,14 @@ import java.util.HashMap;
  */
 public class Main {
 	public static void main(String[] args) {
-		// Read dictionary and indexes if they exist and if not, recreate.
+		prepareDictionaryAndIndexes();
+		QueryManager.startQueryEngine();
+	}
+	
+	/**
+	 * Reads dictionary and indexes if they exist and if not, recreates.
+	 */
+	private static void prepareDictionaryAndIndexes() {
 		try {
 			System.out.println("Reading dictionary from file...");
 			DictionaryBuilder.readDictionaryFromDocument(Constants.dictionaryLocation);
@@ -136,24 +143,6 @@ public class Main {
 		}
 		System.out.println("Tokenizing documents DONE.");
 		return tokenizedDocuments;
-	}
-	
-	/**
-	 * Prints all stories with their titles and bodies.
-	 * Puts ==== barrier between stories.
-	 * Puts ---- barrier between title and body
-	 * Prints the document and story number for each story.
-	 */
-	private static void printAllDocuments(ArrayList<ArrayList<NewsStory>> documents) {
-		for (int i = 0; i < documents.size(); i++) {
-			for (int j = 0 ; j < documents.get(i).size(); j++) {
-				System.out.println("=======================");
-				System.out.println("doc " + i + " story " + j);
-				System.out.println(documents.get(i).get(j).title);
-				System.out.println("-----------------------");
-				System.out.println(documents.get(i).get(j).body);
-			}
-		}
 	}
 
 	/**

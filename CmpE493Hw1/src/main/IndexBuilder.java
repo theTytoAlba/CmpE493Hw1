@@ -41,6 +41,9 @@ public class IndexBuilder {
 		}
 	}
 	
+	/**
+	 * Adds new indexes and words to indexes object using the new stories.
+	 */
 	public static void updateIndexesWithNewDocument(ArrayList<NewsStory> stories) {
 		for (NewsStory story : stories) {
 			// Index the title.
