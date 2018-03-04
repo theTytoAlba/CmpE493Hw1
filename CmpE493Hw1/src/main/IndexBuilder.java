@@ -17,36 +17,27 @@ public class IndexBuilder {
 	/**
 	 * Reads indexes object from file at given location.
 	 */
-	@SuppressWarnings("unchecked")
 	public static void readIndexesFromDocument(String fileName) throws Exception {
-		HashMap<Integer, HashMap<Integer, int[]>> optimizedIndexes = new HashMap<>();
 		try {
 			ObjectInputStream obj = new ObjectInputStream(new FileInputStream(fileName));
 			int size = obj.readInt();
 			for (int wordId = 0; wordId < size; wordId++) {
-				HashMap<Integer, int[]> pageIndexes = new HashMap<>();
-				int pageId = obj.readInt();
-				int[] pageOccurences = (int[]) obj.readObject();
-				pageIndexes.put(pageId, pageOccurences);
-				optimizedIndexes.put(wordId, pageIndexes);
+				HashMap<Integer, ArrayList<Integer>> pageOccurences = new HashMap<>();
+				int numOfPages = obj.readInt();
+				for (int page = 0; page < numOfPages; page++) {
+					int pageId = obj.readInt();
+					int pageSize = obj.readInt();
+					ArrayList<Integer> occurences = new ArrayList<>();
+					for (int pageIndex = 0; pageIndex < pageSize; pageIndex++) {
+						occurences.add(obj.readInt());
+					}
+					pageOccurences.put(pageId, occurences);	
+				}
+				indexes.put(wordId, pageOccurences);
 			}
 		    obj.close();
 		} catch (Exception e) {
 			throw new Exception("IndexesException");
-		}		
-		System.out.println("Preparing index object from read data...");
-		// Cast to existing object.
-		for (int wordId : optimizedIndexes.keySet()) {
-			HashMap<Integer, ArrayList<Integer>> pageOccurences = new HashMap<>();
-			for (int pageId : optimizedIndexes.get(wordId).keySet()) {
-				int[] optimizedOccurences = optimizedIndexes.get(wordId).get(pageId);
-				ArrayList<Integer> occurences = new ArrayList<>();
-				for (int i = 0; i < optimizedOccurences.length; i++) {
-					occurences.add(optimizedOccurences[i]);
-				}
-				pageOccurences.put(pageId, occurences);
-			}
-			indexes.put(wordId, pageOccurences);
 		}
 	}
 	
@@ -102,36 +93,27 @@ public class IndexBuilder {
 	 * Writes the current index hashmap into given file.
 	 */
 	public static void writeIndexesToDocument(String fileName) {
-		System.out.println("Preparing object to write.");
-		HashMap<Integer, HashMap<Integer, int[]>> optimizedIndexes = new HashMap<>();
-		for (int wordId : indexes.keySet()) {
-			HashMap<Integer, int[]> pageOccurences = new HashMap<>();
-			for (int pageId : indexes.get(wordId).keySet()) {
-				ArrayList<Integer> occurences = indexes.get(wordId).get(pageId);
-				int[] optimizedOccurences = new int[occurences.size()];
-				for (int i = 0; i < occurences.size(); i++) {
-					optimizedOccurences[i] = occurences.get(i);
-				}
-				pageOccurences.put(pageId, optimizedOccurences);
-			}
-			optimizedIndexes.put(wordId, pageOccurences);
-		}
-		System.out.println("Object ready. Writing...");
 		ObjectOutputStream obj;
 		try {
 			obj = new ObjectOutputStream(new FileOutputStream(fileName));
-			obj.writeInt(optimizedIndexes.size());
-			for (int i = 0; i < optimizedIndexes.size(); i++) {
-				for (int j : optimizedIndexes.get(i).keySet()) {
-					obj.writeInt(j);
-					obj.writeObject(optimizedIndexes.get(i).get(j));	
+			obj.writeInt(indexes.size());
+			for (int wordId = 0; wordId < indexes.size(); wordId++) {
+				HashMap<Integer, ArrayList<Integer>> pageOccurences = indexes.get(wordId);
+				obj.writeInt(pageOccurences.size());
+				for (int pageId : pageOccurences.keySet()) {
+					obj.writeInt(pageId);
+					ArrayList<Integer> pageIndexes = pageOccurences.get(pageId); 
+					obj.writeInt(pageIndexes.size());
+					for (int k = 0; k < pageIndexes.size(); k++) {
+						obj.writeInt(pageIndexes.get(k));
+					}
 				}
 			}
 	        obj.close();
 		} catch (Exception e) {
 			System.out.println("There was a problem writing the indexes object to file " + fileName);
 			e.printStackTrace();
-		} 	
+		}
 	}
 	
 	/**
