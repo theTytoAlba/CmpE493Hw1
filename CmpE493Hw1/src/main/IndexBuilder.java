@@ -19,10 +19,17 @@ public class IndexBuilder {
 	 */
 	@SuppressWarnings("unchecked")
 	public static void readIndexesFromDocument(String fileName) throws Exception {
-		HashMap<Integer, HashMap<Integer, int[]>> optimizedIndexes;
+		HashMap<Integer, HashMap<Integer, int[]>> optimizedIndexes = new HashMap<>();
 		try {
 			ObjectInputStream obj = new ObjectInputStream(new FileInputStream(fileName));
-			optimizedIndexes = (HashMap<Integer, HashMap<Integer, int[]>>)obj.readObject();
+			int size = obj.readInt();
+			for (int wordId = 0; wordId < size; wordId++) {
+				HashMap<Integer, int[]> pageIndexes = new HashMap<>();
+				int pageId = obj.readInt();
+				int[] pageOccurences = (int[]) obj.readObject();
+				pageIndexes.put(pageId, pageOccurences);
+				optimizedIndexes.put(wordId, pageIndexes);
+			}
 		    obj.close();
 		} catch (Exception e) {
 			throw new Exception("IndexesException");
@@ -113,7 +120,13 @@ public class IndexBuilder {
 		ObjectOutputStream obj;
 		try {
 			obj = new ObjectOutputStream(new FileOutputStream(fileName));
-	        obj.writeObject(optimizedIndexes);
+			obj.writeInt(optimizedIndexes.size());
+			for (int i = 0; i < optimizedIndexes.size(); i++) {
+				for (int j : optimizedIndexes.get(i).keySet()) {
+					obj.writeInt(j);
+					obj.writeObject(optimizedIndexes.get(i).get(j));	
+				}
+			}
 	        obj.close();
 		} catch (Exception e) {
 			System.out.println("There was a problem writing the indexes object to file " + fileName);
