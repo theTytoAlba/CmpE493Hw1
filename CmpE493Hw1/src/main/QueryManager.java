@@ -46,9 +46,73 @@ public class QueryManager {
 		}
 	}
 
+	/**
+	 * Takes in query in form "w1 /k w2 /k w3".
+	 * k's show the max distance between words.
+	 */
 	private static void processProximityQuery(String query) {
-		// TODO Auto-generated method stub
-		
+		// Find the distances and query separately.
+		String queryWithoutDistances = "";
+		ArrayList<Integer> distances = new ArrayList<>();
+		for (String word : query.split(" ")) {
+			if (!word.trim().isEmpty() && word.trim().charAt(0) == '/') {
+				try {
+					distances.add(Integer.parseInt(word.substring(1)));
+				} catch (Exception e) {
+					System.out.println("Failed to get distances between words.");
+					return;
+				}
+			} else {
+				queryWithoutDistances += word.trim() + " ";
+			}
+		}
+		// Get the search words.
+		ArrayList<String> words = StoryTokenizer.stem(StoryTokenizer.tokenizeString(queryWithoutDistances));
+		// We get the first word's occurences as the main one.
+		int wordId = DictionaryBuilder.getDictionary().get(words.get(0));
+		HashMap<Integer, ArrayList<Integer>> occurences = IndexBuilder.getWordIndex(wordId);
+		words.remove(0);
+		// Process the next words.
+		for (String word : words) {
+			wordId = DictionaryBuilder.getDictionary().get(word);
+			HashMap<Integer, ArrayList<Integer>> occurencesNextWord = IndexBuilder.getWordIndex(wordId);
+			// This is to avoid concurrent access errors.
+			ArrayList<Integer> currentPages = new ArrayList<>();
+			for (int pageId : occurences.keySet()) {
+				currentPages.add(pageId);
+			}
+			// Check if existing occurences are still valid and add valid ones to merged occurences.
+			for (int pageId : currentPages) {
+				// Discard page if next word does not appear in it.
+				if (!occurencesNextWord.containsKey(pageId)) {
+					occurences.remove(pageId);
+					continue;
+				}
+				// If it contains try to match orders.
+				ArrayList<Integer> matchingOrders = new ArrayList<>();
+				for (int order : occurences.get(pageId)) {
+					for (int distance = 0; distance <= distances.get(0); distance++) {
+						if (occurencesNextWord.get(pageId).contains(order + 1 + distance)) {
+							matchingOrders.add(order + 1 + distance);
+						}						
+					}
+				}
+				// If there are no matchings, this page is no match, discard.
+				if (matchingOrders.isEmpty()) {
+					occurences.remove(pageId);
+					continue;
+				}
+				// If there are matchings, this page is a match, just update the indexes for the next word.
+				occurences.put(pageId, matchingOrders);
+			}
+			// Before going to the next word, remove the processed distance.
+			distances.remove(0);
+		}
+		// In the end, occurences should only contain pages which went through all steps.
+		// Print found pages in increasing order.
+		ArrayList<Integer> list = new ArrayList<>(occurences.keySet());
+		Collections.sort(list);
+		System.out.println(list.toString());
 	}
 
 	/**
@@ -61,11 +125,11 @@ public class QueryManager {
 		ArrayList<String> words = StoryTokenizer.stem(StoryTokenizer.tokenizeString(query));
 		// Say, we have the first word's occurences as the main one.
 		int wordId = DictionaryBuilder.getDictionary().get(words.get(0));
-		Set<Integer> occurences = IndexBuilder.indexes.get(wordId).keySet();
+		Set<Integer> occurences = IndexBuilder.getWordIndex(wordId).keySet();
 		// Intersect with other sets
 		for (String word : words) {
 			wordId = DictionaryBuilder.getDictionary().get(word);
-			occurences.retainAll(IndexBuilder.indexes.get(wordId).keySet());
+			occurences.retainAll(IndexBuilder.getWordIndex(wordId).keySet());
 		}
 		// Print found pages in increasing order.
 		ArrayList<Integer> list = new ArrayList<>(occurences);
@@ -81,12 +145,12 @@ public class QueryManager {
 		ArrayList<String> words = StoryTokenizer.stem(StoryTokenizer.tokenizeString(query));
 		// We get the first word's occurences as the main one.
 		int wordId = DictionaryBuilder.getDictionary().get(words.get(0));
-		HashMap<Integer, ArrayList<Integer>> occurences = IndexBuilder.indexes.get(wordId);
+		HashMap<Integer, ArrayList<Integer>> occurences = IndexBuilder.getWordIndex(wordId);
 		words.remove(0);
 		// Process the next words.
 		for (String word : words) {
 			wordId = DictionaryBuilder.getDictionary().get(word);
-			HashMap<Integer, ArrayList<Integer>> occurencesNextWord = IndexBuilder.indexes.get(wordId);
+			HashMap<Integer, ArrayList<Integer>> occurencesNextWord = IndexBuilder.getWordIndex(wordId);
 			// This is to avoid concurrent access errors.
 			ArrayList<Integer> currentPages = new ArrayList<>();
 			for (int pageId : occurences.keySet()) {

@@ -12,7 +12,7 @@ public class IndexBuilder {
 	 * Indexes are kept in form:
 	 * <stem id, <document id, <index list>>.
 	 */
-	static HashMap<Integer, HashMap<Integer, ArrayList<Integer>>> indexes = new HashMap<>();
+	private static HashMap<Integer, HashMap<Integer, ArrayList<Integer>>> indexes = new HashMap<>();
 	private static HashMap<String, Integer> dictionary = new HashMap<>();
 	/**
 	 * Reads indexes object from file at given location.
@@ -124,5 +124,17 @@ public class IndexBuilder {
 	 */
 	public static void setDictionary(HashMap<String, Integer> dictionary) {
 		IndexBuilder.dictionary = dictionary;
+	}
+	
+	public static HashMap<Integer, ArrayList<Integer>> getWordIndex(int wordId) {
+		HashMap<Integer, ArrayList<Integer>> result = new HashMap<>();
+		for (int key : indexes.get(wordId).keySet()) {
+			ArrayList<Integer> keyIndexes = new ArrayList<>();
+			for (int index : indexes.get(wordId).get(key)) {
+				keyIndexes.add(index);
+			}
+			result.put(key, keyIndexes);
+		}
+		return result;
 	}
 }
