@@ -27,9 +27,6 @@ public class Main {
 			System.out.println("Reading indexes from file...");
 			IndexBuilder.readIndexesFromDocument(Constants.indexesLocation);
 			System.out.println("Reading indexes from file DONE.");
-			System.out.println("Reading stop words from file...");
-			StoryTokenizer.setStopWords(readStopWords());
-			System.out.println("Reading stop words from file DONE.");
 		} catch (Exception e) {
 			if (e.getMessage().equals("DictionaryException")) {
 				System.out.println("Failed to read dictionary from file, recreating...");

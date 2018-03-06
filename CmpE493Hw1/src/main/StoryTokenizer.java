@@ -48,9 +48,11 @@ public class StoryTokenizer {
 		text = text.replaceAll("\\/", " ");
 		text = text.replaceAll("\\-", " ");
 		text = text.replaceAll("\n", " ");
-		// Remove all stop words.
-		for (String stopWord : stopWords) {
-			text = text.replaceAll("\\b" + stopWord + "\\b", "");
+		// Remove all stop words if they exist. They will not exist when processing queries.
+		if (stopWords != null && !stopWords.isEmpty()) {
+			for (String stopWord : stopWords) {
+				text = text.replaceAll("\\b" + stopWord + "\\b", "");
+			}			
 		}
 		// Tokenize by space.
 		ArrayList<String> tokens = new ArrayList<>();

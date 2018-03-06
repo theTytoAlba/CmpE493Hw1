@@ -67,7 +67,7 @@ public class QueryManager {
 			}
 		}
 		// Get the search words.
-		ArrayList<String> words = StoryTokenizer.stem(StoryTokenizer.tokenizeString(queryWithoutDistances));
+		ArrayList<String> words = filterOutNonDictionaryWords(StoryTokenizer.stem(StoryTokenizer.tokenizeString(queryWithoutDistances)));
 		// We get the first word's occurences as the main one.
 		int wordId = DictionaryBuilder.getDictionary().get(words.get(0));
 		HashMap<Integer, ArrayList<Integer>> occurences = IndexBuilder.getWordIndex(wordId);
@@ -122,7 +122,7 @@ public class QueryManager {
 		// Remove and's first.
 		query = query.replaceAll("\\bAND\\b", "");
 		// Get the search words.
-		ArrayList<String> words = StoryTokenizer.stem(StoryTokenizer.tokenizeString(query));
+		ArrayList<String> words = filterOutNonDictionaryWords(StoryTokenizer.stem(StoryTokenizer.tokenizeString(query)));
 		// Say, we have the first word's occurences as the main one.
 		int wordId = DictionaryBuilder.getDictionary().get(words.get(0));
 		Set<Integer> occurences = IndexBuilder.getWordIndex(wordId).keySet();
@@ -142,7 +142,7 @@ public class QueryManager {
 	 */
 	private static void processPhraseQuery(String query) {
 		// Get the search words.
-		ArrayList<String> words = StoryTokenizer.stem(StoryTokenizer.tokenizeString(query));
+		ArrayList<String> words = filterOutNonDictionaryWords(StoryTokenizer.stem(StoryTokenizer.tokenizeString(query)));
 		// We get the first word's occurences as the main one.
 		int wordId = DictionaryBuilder.getDictionary().get(words.get(0));
 		HashMap<Integer, ArrayList<Integer>> occurences = IndexBuilder.getWordIndex(wordId);
@@ -184,5 +184,18 @@ public class QueryManager {
 		ArrayList<Integer> list = new ArrayList<>(occurences.keySet());
 		Collections.sort(list);
 		System.out.println(list.toString());
+	}
+
+	/**
+	 * Takes in stemmed words list, removes the ones that are not in dictionary: stop words.
+	 */
+	private static ArrayList<String> filterOutNonDictionaryWords(ArrayList<String> words) {
+		ArrayList<String> result = new ArrayList<>();
+		for (String word : words) {
+			if (DictionaryBuilder.getDictionary().containsKey(word)) {
+				result.add(word);
+			}
+		}
+		return result;
 	}
 }
