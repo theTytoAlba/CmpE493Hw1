@@ -29,7 +29,7 @@ public class StoryExtractor {
 		// Organize tokens to merge non-token entries.
 		tagTokens = organizeTagsAndStrings(tagTokens);
 		// Extract texts of stories.
-		ArrayList<ArrayList<String>> storyTexts = extractTexts(tagTokens);
+		ArrayList<ArrayList<String>> storyTexts = extractTextsAndIDs(tagTokens);
 		// Extract title and body of texts.
 		ArrayList<NewsStory> stories = extractTitleAndBody(storyTexts);
 		// Return result
@@ -44,7 +44,9 @@ public class StoryExtractor {
 		ArrayList<NewsStory> stories = new ArrayList<>();
 		for (ArrayList<String> storyText : storyTexts) {
 			NewsStory story = new NewsStory();
-			for (int i = 0; i < storyText.size(); i++) {
+			// Set the id.
+			story.storyID = Integer.parseInt(storyText.get(0));
+			for (int i = 1; i < storyText.size(); i++) {
 				// Find the title
 				if(storyText.get(i).equals("<TITLE>")) {
 					// Find the end of the title.
@@ -83,14 +85,29 @@ public class StoryExtractor {
 	 * Given an organized string array of tags and non-tags,
 	 * creates an array of string arrays where
 	 * each array is one story's content (between text tags).
+	 * Initial element in every list is the id of that text.
 	 */
-	private static ArrayList<ArrayList<String>> extractTexts(ArrayList<String> tokens) {
+	private static ArrayList<ArrayList<String>> extractTextsAndIDs(ArrayList<String> tokens) {
 		ArrayList<ArrayList<String>> texts = new ArrayList<>();
-		
+		String currentId = "";
 		for (int i = 0; i < tokens.size(); i++) {
 			ArrayList<String> newsStory = new ArrayList<>();
+			// Find the id.
+			if (tokens.get(i).contains("NEWID=\"")) {
+				currentId = "";
+				for (int j = tokens.get(i).indexOf("NEWID=\"") + 7; 
+						j < tokens.get(i).length(); j++) {
+					if (tokens.get(i).charAt(j) != '"') {
+						currentId += tokens.get(i).charAt(j);
+					} else {
+						break;
+					}
+				}
+			}
 			// Find the beginning of the text.
 			if (tokens.get(i).equals("<TEXT>")) {
+				// Add id as the first token.
+				newsStory.add(currentId);
 				// Find the ending of the text and create the news story from tokens in between.
 				for (int j = i+1; j < tokens.size(); j++) {
 					if (tokens.get(j).equals("</TEXT>")) {

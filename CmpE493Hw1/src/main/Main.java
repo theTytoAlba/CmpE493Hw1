@@ -111,21 +111,6 @@ public class Main {
 			documents.add(StoryExtractor.getStoriesFromDocument(fileName));
 		}
 		System.out.println("Reading documents DONE.");
-		documents = giveIDsToStories(documents);
-		return documents;
-	}
-	
-	/**
-	 * Gives IDs to stories as documentNumber*1000 + storyNumber.
-	 */
-	private static ArrayList<ArrayList<NewsStory>> giveIDsToStories(ArrayList<ArrayList<NewsStory>> documents) {
-		System.out.println("Giving IDs to documents...");
-		for (int i = 0; i < documents.size(); i++) {
-			for (int j = 0; j < documents.get(i).size(); j++) {
-				documents.get(i).get(j).storyID = i*1000 + j;
-			}
-		}
-		System.out.println("Giving IDs to documents DONE.");
 		return documents;
 	}
 
