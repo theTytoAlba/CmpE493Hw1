@@ -62,8 +62,8 @@ public class StoryExtractor {
 					for (int j = i+1; j < storyText.size(); j++) {
 						if(storyText.get(j).equals("</BODY>")) {
 							// fix '<' character.
-							story.title = story.title.replaceAll("&lt;", "<");
-							story.body = story.body.replaceAll("&lt;", "<");
+							story.title = story.title.replaceAll("&lt;", " ");
+							story.body = story.body.replaceAll("&lt;", " ");
 							// Fix end of file character.
 							story.title = story.title.replaceAll("&#3;", "");
 							story.body = story.body.replaceAll("&#3;", "");

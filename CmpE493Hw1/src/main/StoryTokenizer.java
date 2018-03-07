@@ -47,6 +47,8 @@ public class StoryTokenizer {
 		text = text.replaceAll("\\'", " ");
 		text = text.replaceAll("\\/", " ");
 		text = text.replaceAll("\\-", " ");
+		text = text.replaceAll("<", " ");
+		text = text.replaceAll(">", " ");
 		text = text.replaceAll("\n", " ");
 		// Remove all stop words if they exist. They will not exist when processing queries.
 		if (stopWords != null && !stopWords.isEmpty()) {
